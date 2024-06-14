@@ -731,10 +731,9 @@ from pandasai import Agent
 
 def add_skills_to_agent(agent: Agent):
 
-    if agent is None:
-        raise ValueError("Agent is not initialized")
+    # if agent is None:
+    #     raise ValueError("Agent is not initialized")
     
-    agent = agent.add_skills(bland_altman_plot, change_from_baseline_plot, plot_endpoint_distribution, plot_correlation, severity_category_confusion_matrix, categorized_strip_plot)
-    return agent
+    agent.add_skills(bland_altman_plot, change_from_baseline_plot, plot_endpoint_distribution, plot_correlation, severity_category_confusion_matrix, categorized_strip_plot)
 
 
