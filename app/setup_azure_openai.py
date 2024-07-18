@@ -1,6 +1,7 @@
 from azure.identity import ClientSecretCredential
 from langchain_openai.chat_models import AzureChatOpenAI
 from langchain_openai import AzureOpenAIEmbeddings
+import streamlit as st
 
 from dotenv import load_dotenv
 import os
@@ -8,9 +9,9 @@ import os
 class AzureOpenAISetup:
     def __init__(self):
         load_dotenv()
-        self.tenant_id = os.environ.get("tenant_id")
-        self.client_id = os.environ.get("client_id")
-        self.client_secret = os.environ.get("client_secret")
+        self.tenant_id = st.secrets["tenant_id"] # replaced os.environ.get("tenant_id")
+        self.client_id = st.secrets["client_id"]
+        self.client_secret = st.secrets["client_secret"]
         self.refresh_token()
 
     def refresh_token(self):
