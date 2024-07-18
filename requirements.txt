@@ -1,4 +1,3 @@
-magnolai @ file:///Users/L075945/Library/CloudStorage/OneDrive-EliLillyandCompany/Documents/GitHub/DIGH_DE_No_Code_Data_Analysis/SDK/magnolai-3.0.2.dev0-py3-none-any.whl#sha256=d38534d7dec352a8821a5ebf96ab8ff639ff53f31a63fdb4dfdf4bc54ce958f1
 aiofiles==23.2.1
 aiohttp==3.9.3
 aiosignal==1.3.1
@@ -42,7 +41,7 @@ dash-mantine-components==0.12.1
 dash-table==5.0.0
 dash_ag_grid==31.0.1
 dataclasses-json==0.6.4
-debugpy==1.8.1
+debugpy==1.8.2
 decorator==5.1.1
 Deprecated==1.2.14
 distlib==0.3.8
@@ -61,7 +60,9 @@ flatbuffers==24.3.25
 fonttools==4.49.0
 frozenlist==1.4.1
 fsspec==2024.2.0
-google-auth==2.29.0
+gitdb==4.0.11
+GitPython==3.1.43
+google-auth==2.30.0
 googleapis-common-protos==1.63.1
 gradio==4.19.1
 gradio_client==0.10.0
@@ -80,8 +81,8 @@ hyperframe==6.0.1
 idna==3.6
 importlib-resources==6.1.1
 importlib_metadata==7.1.0
-ipykernel==6.29.4
-ipython==8.25.0
+ipykernel==6.29.5
+ipython==8.26.0
 itsdangerous==2.1.2
 jedi==0.19.1
 Jinja2==3.1.3
@@ -94,7 +95,7 @@ jupyter_client==8.6.2
 jupyter_core==5.7.2
 kaleido==0.2.1
 kiwisolver==1.4.5
-kubernetes==29.0.0
+kubernetes==30.1.0
 langchain==0.1.8
 langchain-community==0.0.21
 langchain-core==0.1.24
@@ -132,7 +133,7 @@ opentelemetry-semantic-conventions==0.46b0
 opentelemetry-util-http==0.46b0
 orjson==3.9.14
 overrides==7.7.0
-# packaging==24.0
+packaging==23.2
 pandas==1.5.3
 pandasai==2.0.27
 parso==0.8.4
@@ -140,22 +141,24 @@ patsy==0.5.6
 pexpect==4.9.0
 pillow==10.2.0
 pkgutil_resolve_name==1.3.10
-platformdirs==4.2.2
+platformdirs==4.2.1
 plotly==5.20.0
 portalocker==2.8.2
 posthog==3.5.0
-prompt_toolkit==3.0.46
-# protobuf==3.19.5
-psutil==5.9.8
+prompt_toolkit==3.0.47
+protobuf==5.27.1
+psutil==6.0.0
 ptyprocess==0.7.0
 pure-eval==0.2.2
+pyarrow==16.1.0
 pyasn1==0.6.0
 pyasn1_modules==0.4.0
 pycparser==2.21
 pydantic==2.6.1
 pydantic_core==2.16.2
+pydeck==0.9.1
 pydub==0.25.1
-Pygments==2.18.0
+Pygments==2.17.2
 PyJWT==2.8.0
 pyparsing==3.1.1
 PyPika==0.48.9
@@ -184,25 +187,28 @@ seaborn==0.13.2
 semantic-version==2.10.0
 shellingham==1.5.4
 six==1.16.0
+smmap==5.0.1
 sniffio==1.3.0
 SQLAlchemy==2.0.27
 stack-data==0.6.3
 starlette==0.36.3
 statsmodels==0.14.1
+streamlit==1.35.0
 sympy==1.12.1
 tenacity==8.2.3
 tiktoken==0.6.0
 tokenizers==0.19.1
+toml==0.10.2
 tomlkit==0.12.0
 toolz==0.12.1
-tornado==6.4
+tornado==6.4.1
 tqdm==4.66.2
 traitlets==5.14.3
 typer==0.9.0
 types-requests==2.31.0.6
 types-urllib3==1.26.25.14
 typing-inspect==0.9.0
-typing_extensions==4.12.1
+typing_extensions==4.9.0
 tzdata==2024.1
 urllib3==1.26.18
 uvicorn==0.27.1

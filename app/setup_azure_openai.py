@@ -32,25 +32,13 @@ class AzureOpenAISetup:
 
     def get_token(self):
         return self.token
-    
-llm_model_name = 'gpt-4o'
-azure_endpoint="https://do-openai-instance.openai.azure.com/"
 
 azure_setup = AzureOpenAISetup()
  # refresh token and update corresponding envs
 # call this refresh_token if needed
 azure_setup.refresh_token()
 
-# create llm from Azure OpenAI
 
-def get_llm():
-    llm = AzureChatOpenAI(
-        streaming=False,
-        deployment_name=llm_model_name,
-        azure_endpoint=azure_endpoint,
-        temperature=0
-    )
-    return llm
     
     
     

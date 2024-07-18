@@ -96,7 +96,6 @@ def call_langchain_agent(df, model, user_input):
         return "Error during model invocation"
 
     if response["response_type"] == "clarification_question":
-        num_clarification_questions_asked += 1
         return response["response_content"]
     else:
         # Add skills to the Agent
