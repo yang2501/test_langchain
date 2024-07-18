@@ -146,7 +146,8 @@ plotly==5.20.0
 portalocker==2.8.2
 posthog==3.5.0
 prompt_toolkit==3.0.47
-protobuf==5.27.1
+# protobuf==5.27.1
+protobuf>=3.19.5, <6.0.0.dev0
 psutil==6.0.0
 ptyprocess==0.7.0
 pure-eval==0.2.2
