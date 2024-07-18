@@ -49,11 +49,11 @@ fsspec==2024.2.0
 gitdb==4.0.11
 GitPython==3.1.43
 google-auth==2.30.0
-googleapis-common-protos==1.63.1
+googleapis-common-protos
 gradio==4.19.1
 gradio_client==0.10.0
 grpcio==1.64.1
-grpcio-tools==1.64.1
+grpcio-tools
 gunicorn==21.2.0
 h11==0.14.0
 httpcore==1.0.3
@@ -101,14 +101,14 @@ mypy-extensions==1.0.0
 nest-asyncio==1.6.0
 numpy==1.26.4
 oauthlib==3.2.2
-onnxruntime==1.18.0
+onnxruntime
 openai==1.12.0
 opentelemetry-api==1.25.0
 opentelemetry-exporter-otlp-proto-grpc==1.11.1
 opentelemetry-instrumentation==0.46b0
 opentelemetry-instrumentation-asgi==0.46b0
 opentelemetry-instrumentation-fastapi==0.46b0
-opentelemetry-proto==1.11.1
+opentelemetry-proto
 opentelemetry-sdk==1.25.0
 opentelemetry-semantic-conventions==0.46b0
 opentelemetry-util-http==0.46b0
@@ -126,7 +126,7 @@ plotly==5.20.0
 portalocker==2.8.2
 posthog==3.5.0
 prompt_toolkit==3.0.47
-protobuf>=3.19.5, <6.0.0.dev0
+protobuf
 psutil==6.0.0
 ptyprocess==0.7.0
 pure-eval==0.2.2
@@ -171,7 +171,7 @@ SQLAlchemy==2.0.27
 stack-data==0.6.3
 starlette==0.36.3
 statsmodels==0.14.1
-streamlit==1.35.0
+streamlit
 sympy==1.12.1
 tenacity==8.2.3
 tiktoken==0.6.0
