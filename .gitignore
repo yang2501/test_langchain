@@ -1,4 +1,4 @@
 .streamlit/secrets.toml
 
 # Ignore all .env files
-*.env
+app/.env
