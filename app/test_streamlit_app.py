@@ -4,12 +4,16 @@ import pandas as pd
 # Azure OpenAI endpoint setup and authentication
 from setup_azure_openai import AzureOpenAISetup
 from langchain_openai.chat_models import AzureChatOpenAI
+
 from pandasai import Agent
 from pandasai.ee.vectorstores import ChromaDB
 from pandasai.responses.streamlit_response import StreamlitResponse
+
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts import PromptTemplate
 from langchain_core.pydantic_v1 import BaseModel, Field
+
+from plotly.graph_objs._figure import Figure
 
 # Remember to do "export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python" before running the app
 import os
@@ -137,21 +141,45 @@ result = {response["response_content"]}
         result = local_scope['result']
         return result 
 
+# Initialize chat history
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# Display chat messages from history on app rerun
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        if all(isinstance(fig, Figure) for fig in message["content"]):
+            for fig in message["content"]:
+                st.plotly_chart(fig)
+        else:
+            st.markdown(message["content"])
+
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
     st.sidebar.write(df.head(5))
-             
-    prompt = st.text_area("Enter your prompt:")
     
-    if st.button("Generate"):
-        if prompt:
-            with st.spinner("Generating response..."):
-                response = call_langchain_agent(df, langchain_llm, prompt)
-                from plotly.graph_objs._figure import Figure
-                if all(isinstance(fig, Figure) for fig in response):
-                    for fig in response:
-                        st.plotly_chart(fig)
-                else:
-                    st.write(response)
-        else:
-            st.warning("Please enter a prompt")
+    # Display the prompt text area
+    if prompt := st.chat_input("Enter your prompt:"):
+
+        with st.chat_message("user"):
+            st.markdown(prompt)
+        
+        # Add user message to chat history
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        
+        with st.chat_message("assistant"):
+            response = call_langchain_agent(df, langchain_llm, prompt)
+            from plotly.graph_objs._figure import Figure
+                
+            if all(isinstance(fig, Figure) for fig in response):
+                for fig in response:
+                    st.plotly_chart(fig)
+            else:
+                st.write(response)
+                    
+        # Add assistant response to chat history
+        st.session_state.messages.append({"role": "assistant", "content": response})
+            
+
+    
+#Give me a visualization report comparing ahi and pahi. ahi is the gold standard endpoint and plot by severity category. use the uploaded dataframe. you don't need more information
