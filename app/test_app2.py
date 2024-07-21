@@ -26,7 +26,7 @@
 
 # # Define your desired data structure.
 # class Response(BaseModel):
-#     response_type: str = Field(description="can hold string values: clarification_question, pandasai_prompt")
+#     response_type: str = Field(description="can hold string values: clarification_question, pandasai_visualization_prompt, pandasai_anomaly_detection_prompt")
 #     response_content: str = Field(description="the response content being the actual clarification question or prompt to pandasai")
 
 # parser = JsonOutputParser(pydantic_object=Response)
@@ -45,7 +45,7 @@
 # global summarized_user_input
 # summarized_user_input = ""
 
-# def call_pandasai(df, langchain_llm, input):
+# def call_visualization_pandasai(df, langchain_llm, input):
 #     # Add skills to the Agent
 #         vectorstore = ChromaDB()
 #         agent = Agent(df, config={"llm": langchain_llm, "response_parser": StreamlitResponse}, vectorstore=vectorstore)
@@ -76,8 +76,13 @@
 
 #     # Define the message format, this may vary based on the implementation of AzureChatOpenAI
 #     function_headers = """
-#         def bland_altman_plot(df, endpoint1, endpoint2, bySeverityCategory=False):
-#         def change_from_baseline_plot(df, endpoint):
+#     1. The bland_altman_plot function takes ONLY these parameters: df, endpoint1, endpoint2, bySeverityCategory=False
+#     2. The change_from_baseline_plot function takes ONLY these parameters: df, endpoint
+#     3. The plot_endpoint_distribution function takes ONLY these parameters: df, endpoint1, endpoint2, bySeverityCategory=False
+#     4. The plot_correlation function takes ONLY these parameters: df, endpoint1, endpoint2, bySeverityCategory=False
+#     5. The severity_category_confusion_matrix function takes ONLY these parameters: df, endpoint, visit1='Screening', visit2=None
+#     6. The categorized_strip_plot function takes ONLY these parameters: df, endpoint, gold_standard_endpoint, visit=None
+#     7. The two_endpoints_visualization_report takes ONLY these parameters: df, endpoint1, endpoint2, gold_standard_endpoint, bySeverityCategory=False
         
 #         For functions that need 2 endpoints, if the user only gives one endpoint, ask for the other endpoint.
 #         Always ask whether the user wants to plot multiple plots by the endpoint severity category.
@@ -121,14 +126,14 @@
 
 #     if num_questions_asked >= max_clarification_questions:
 #         num_questions_asked = 0
-#         call_pandasai(df, langchain_llm, summarized_user_input)
+#         call_visualization_pandasai(df, langchain_llm, summarized_user_input)
 #         summarized_user_input = ""
 #     if response["response_type"] == "clarification_question":
 #         num_questions_asked += 1
 #         return response["response_content"]
 #     else:
 #         num_questions_asked = 0
-#         call_pandasai(df, langchain_llm, response["response_content"])
+#         call_visualization_pandasai(df, langchain_llm, response["response_content"])
 #         summarized_user_input = ""
 
 # if uploaded_file is not None:
@@ -142,6 +147,7 @@
 #             with st.spinner("Generating response..."):
 #                 summarized_user_input += prompt
 #                 response = call_langchain_agent(df, langchain_llm, summarized_user_input)
+#                 st.write("Summarized user input": {summarized_user_input})
 #                 st.write(response)
 #         else:
 #             st.warning("Please enter a prompt")

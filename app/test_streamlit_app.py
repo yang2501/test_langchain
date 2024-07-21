@@ -15,50 +15,6 @@ from langchain_core.pydantic_v1 import BaseModel, Field
 import os
 os.environ['PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION'] = 'python'
 
-#### CODE FROM SETUP_AZURE_OPENAI.PY
-from azure.identity import ClientSecretCredential
-from langchain_openai.chat_models import AzureChatOpenAI
-from langchain_openai import AzureOpenAIEmbeddings
-import streamlit as st
-
-from dotenv import load_dotenv
-import os
-
-class AzureOpenAISetup:
-    def __init__(self):
-        load_dotenv()
-        self.tenant_id = st.secrets.openai.tenant_id # replaced os.environ.get("tenant_id")
-        self.client_id = st.secrets.openai.client_id
-        self.client_secret = st.secrets.openai.client_secret
-        self.refresh_token()
-
-    def refresh_token(self):
-        credential = ClientSecretCredential(self.tenant_id, self.client_id, self.client_secret)
-        self.token = credential.get_token("   https://cognitiveservices.azure.com/.default")
-        os.environ["OPENAI_API_TYPE"] = "azure_ad"
-        os.environ["OPENAI_API_KEY"] = self.token.token
-        os.environ["AZURE_OPENAI_AD_TOKEN"] = self.token.token
-        os.environ["OPENAI_API_VERSION"] = "2023-07-01-preview"
-
-        self.embeddings = AzureOpenAIEmbeddings(
-            model="text-embedding-ada-002",
-            openai_api_key=self.token.token,
-            azure_endpoint="https://do-openai-instance.openai.azure.com/",
-        )
-
-    def get_embeddings(self):
-        return self.embeddings
-
-    def get_token(self):
-        return self.token
-
-azure_setup = AzureOpenAISetup()
- # refresh token and update corresponding envs
-# call this refresh_token if needed
-azure_setup.refresh_token()
-    
-####
-
 azure_setup = AzureOpenAISetup()
 azure_setup.refresh_token()
 langchain_llm = AzureChatOpenAI(
@@ -70,8 +26,8 @@ langchain_llm = AzureChatOpenAI(
 
 # Define your desired data structure.
 class Response(BaseModel):
-    response_type: str = Field(description="can hold string values: clarification_question, pandasai_prompt")
-    response_content: str = Field(description="the response content being the actual clarification question or prompt to pandasai")
+    response_type: str = Field(description="can hold string values: clarification_question, pandasai_prompt, custom_plotting_function, custom_anomaly_detection_function")
+    response_content: str = Field(description="the response content being the actual clarification question OR prompt to pandasai OR custom plotting function header with all parameters OR custom anomaly detection function with all parameters")
 
 parser = JsonOutputParser(pydantic_object=Response)
 
@@ -96,20 +52,28 @@ def call_langchain_agent(df, model, user_input):
 
     # Define the message format, this may vary based on the implementation of AzureChatOpenAI
     function_headers = """
-        def bland_altman_plot(df, endpoint1, endpoint2, bySeverityCategory=False):
-        def change_from_baseline_plot(df, endpoint):
-        
-        For functions that need 2 endpoints, if the user only gives one endpoint, ask for the other endpoint.
-        Always ask whether the user wants to plot multiple plots by the endpoint severity category.
+    1. The bland_altman_plot function takes ONLY these parameters: df, endpoint1, endpoint2, bySeverityCategory=False
+    2. The change_from_baseline_plot function takes ONLY these parameters: df, endpoint
+    3. The original_plot_endpoint_distribution function takes ONLY these parameters: df, endpoint1, endpoint2, bySeverityCategory=False
+    4. The plot_correlation function takes ONLY these parameters: df, endpoint1, endpoint2, bySeverityCategory=False
+    5. The severity_category_confusion_matrix function takes ONLY these parameters: df, endpoint, visit1='Screening', visit2=None
+    6. The categorized_strip_plot function takes ONLY these parameters: df, endpoint, gold_standard_endpoint, visit=None
+    7. The two_endpoints_visualization_report function takes ONLY these parameters: df, endpoint1, endpoint2, gold_standard_endpoint, bySeverityCategory=False
+    
+        For functions that need 2 endpoints, if the user only gives one endpoint, ask for the other endpoint. 
     """
 
     system_content = (
-        f"You are a helpful assistant specialized in identifying the user's intent and generating clarifying questions "
-        f"to enhance the performance of the Pandas.AI agent. When a user's prompt to Pandas.AI is too vague, create a context-specific clarifying question using the parameters in the function list. "
-        f"For instance, if the prompt likely requires calling a custom data visualization function, ask clarifying questions to specify the necessary parameters. "
-        f"Below is the list of custom function headers: {function_headers}. The unique endpoints in the data frame are: {unique_endpoints}. "
+        f"You are a helpful assistant specialized in identifying the user's intent and generating clarifying questions."
+        f"The dataframe is ALREADY EXISTS IN LOCAL SCOPE."
+        f"ASK AS FEW CLARIFYING QUESTIONS AS POSSIBLE."
+        f"When a user's prompt is too vague, create a context-specific clarifying question using the parameters in the function list. "
+        f"For instance, if the prompt likely requires calling a custom data visualization function, ask the user to specify the necessary parameters. "
+        f"Below is the list of custom plotting functions and their parameters: {function_headers}. "
+        f"Below is more information about the data in the dataframe. This is useful for matching the prompt to a function and its parameters"
+        f"The unique endpoints in the data frame are: {unique_endpoints}. "
         f"The unique devices in the data frame are: {unique_devices}. The unique visits in the data frame are: {unique_visits}. "
-        f"If no clarifying questions are needed, output the Pandas.AI natural language prompt directly."
+        f"If no clarifying questions are needed, output the custom function header OR Pandas.AI natural language prompt directly."
     )
 
     messages = [
@@ -141,19 +105,37 @@ def call_langchain_agent(df, model, user_input):
 
     if response["response_type"] == "clarification_question":
         return response["response_content"]
-    else:
+    elif response["response_type"] == "pandasai_prompt":
         # Add skills to the Agent
         vectorstore = ChromaDB()
-        agent = Agent(df, config={"llm": langchain_llm, "response_parser": StreamlitResponse}, vectorstore=vectorstore)
-        from add_skills import bland_altman_plot, change_from_baseline_plot #, plot_endpoint_distribution, plot_correlation, severity_category_confusion_matrix, categorized_strip_plot
-        agent.add_skills(bland_altman_plot, change_from_baseline_plot) #, plot_endpoint_distribution, plot_correlation, severity_category_confusion_matrix, categorized_strip_plot)
-                    
-        # QA train the Agent
-        from qa_train import get_training_materials
-        docs, queries, codes = get_training_materials()
-        agent.train(docs=docs)
-        agent.train(queries=queries, codes=codes)
+        description = "You're a data analyst. When user asks you to plot or draw the graph of anything, you should provide the code to visualize the answer using plotly."
+        agent = Agent(df, config={"llm": langchain_llm, "response_parser": StreamlitResponse}, vectorstore=vectorstore, description = description)
         return agent.chat(response["response_content"])
+    elif response["response_type"] == "custom_plotting_function":
+        st.write("function header is:")
+        st.write(response["response_content"])
+        
+        from add_skills import bland_altman_plot, change_from_baseline_plot, plot_endpoint_distribution, plot_correlation, severity_category_confusion_matrix, categorized_strip_plot, two_endpoints_visualization_report
+        # Prepare the local scope with necessary functions and data
+        local_scope = {
+            'df': df,
+            'bland_altman_plot': bland_altman_plot,
+            'change_from_baseline_plot': change_from_baseline_plot,
+            'plot_endpoint_distribution': plot_endpoint_distribution,
+            'plot_correlation': plot_correlation,
+            'severity_category_confusion_matrix': severity_category_confusion_matrix,
+            'categorized_strip_plot': categorized_strip_plot,
+            'two_endpoints_visualization_report': two_endpoints_visualization_report
+        }
+        code = f"""
+import pandas as pd
+
+result = {response["response_content"]}
+
+"""
+        exec(code, {}, local_scope)
+        result = local_scope['result']
+        return result 
 
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
@@ -165,6 +147,11 @@ if uploaded_file is not None:
         if prompt:
             with st.spinner("Generating response..."):
                 response = call_langchain_agent(df, langchain_llm, prompt)
-                st.write(response)
+                from plotly.graph_objs._figure import Figure
+                if all(isinstance(fig, Figure) for fig in response):
+                    for fig in response:
+                        st.plotly_chart(fig)
+                else:
+                    st.write(response)
         else:
             st.warning("Please enter a prompt")

@@ -14,22 +14,37 @@ query = "Plot a bland altman plot comparing AHI for the devices"
 query2 = "Generate the Bland-Altman plot for comparing AHI and PAHI"
 query3 = "Generate the Bland-Altman plot comparing AHI and PAHI for all severity categories"
 response = """
+def analyze_data(dfs: list[pd.DataFrame]) -> dict:
     import pandas as pd
+    import plotly.io as pio
 
     df = dfs[0]
-    bland_altman_plot(df, endpoint1='AHI', endpoint2='PAHI', bySeverityCategory=False)
+    fig = bland_altman_plot(df, endpoint1='AHI', endpoint2='PAHI', bySeverityCategory=False)
+    # Convert Plotly figure to JSON
+    fig_json = pio.to_json(fig)
+    return fig_json
 """
 response2 = """
+def analyze_data(dfs: list[pd.DataFrame]) -> dict:
     import pandas as pd
+    import plotly.io as pio
 
     df = dfs[0]
-    bland_altman_plot(df, endpoint1='AHI', endpoint2='PAHI', bySeverityCategory=False)
+    fig = bland_altman_plot(df, endpoint1='AHI', endpoint2='PAHI', bySeverityCategory=False)
+    # Convert Plotly figure to JSON
+    fig_json = pio.to_json(fig)
+    return fig_json
 """
 response3 = """
+def analyze_data(dfs: list[pd.DataFrame]) -> dict:
     import pandas as pd
+    import plotly.io as pio
 
     df = dfs[0]
-    bland_altman_plot(df, endpoint1='AHI', endpoint2='PAHI', bySeverityCategory=True)
+    fig = bland_altman_plot(df, endpoint1='AHI', endpoint2='PAHI', bySeverityCategory=True)
+    # Convert Plotly figure to JSON
+    fig_json = pio.to_json(fig)
+    return fig_json
 """
 
 #Train for change from baseline
@@ -133,6 +148,28 @@ response6 = """
 #     devices = df['DEVICE'].unique()
     
 #     plot_correlation(df, endpoint1='AHI', endpoint2='PAHI', bySeverityCategory=False)
+#     return { "type": "plot", "value": "temp_chart.png"}
+# """
+
+# query15 = "Create a visualization report comparing the endpoints AHI and PAHI where AHI is the gold standard."
+# response15 = """ 
+# def analyze_data(dfs: list[pd.DataFrame]) -> dict:
+#     df = dfs[0]
+    
+#     devices = df['DEVICE'].unique()
+    
+#     two_endpoints_visualization_report(df, 'AHI', 'PAHI', gold_standard_endpoint='AHI', bySeverityCategory=False)
+#     return { "type": "plot", "value": "temp_chart.png"}
+# """
+
+# query16 = "Create a visualization report comparing the endpoints AHI and PAHI where PSG is the gold standard device."
+# response16 = """ 
+# def analyze_data(dfs: list[pd.DataFrame]) -> dict:
+#     df = dfs[0]
+    
+#     devices = df['DEVICE'].unique()
+    
+#     two_endpoints_visualization_report(df, 'AHI', 'PAHI', gold_standard_endpoint='AHI', bySeverityCategory=False)
 #     return { "type": "plot", "value": "temp_chart.png"}
 # """
 
