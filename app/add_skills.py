@@ -265,7 +265,7 @@ def change_from_baseline_plot(df, endpoint):
             unique_xlabels.append(label)
 
     fig.update_layout(
-        title=f"{df.loc[df['digital_EP'] == endpoint, 'DEVICE'].iloc[0] if not df.loc[df['digital_EP'] == endpoint, 'DEVICE'].empty else 'Unknown Device'} {endpoint} Change from Baseline",
+        title=f"{df.loc[df['digital_EP'] == endpoint, 'DEVICE'].iloc[0] if not df.loc[df['digital_EP'] == endpoint, 'DEVICE'].empty else 'Unknown Device'} {endpoint} Change from Baseline Plot",
         xaxis=dict(
             title='Visit',
             tickmode='array',
@@ -349,10 +349,10 @@ def plot_endpoint_distribution(df, endpoint1, endpoint2, bySeverityCategory=Fals
             group_labels = [f'{category} {endpoint1}', f'{category} {endpoint2}']
 
             fig1 = ff.create_distplot(hist_data1, [group_labels[0]], bin_size=0.2, show_hist=False, show_rug=False)
-            fig1.update_layout(title=f'Distribution of {endpoint1} by Severity Category: {category}', template='plotly_white')
+            fig1.update_layout(title=f'Plot of distribution of {endpoint1} by Severity Category: {category}', template='plotly_white')
 
             fig2 = ff.create_distplot(hist_data2, [group_labels[1]], bin_size=0.2, show_hist=False, show_rug=False)
-            fig2.update_layout(title=f'Distribution of {endpoint2} by Severity Category: {category}', template='plotly_white')
+            fig2.update_layout(title=f'Plot of distribution of {endpoint2} by Severity Category: {category}', template='plotly_white')
             
             plot_results.extend([fig1, fig2])
     else:
@@ -460,6 +460,7 @@ def plot_correlation(df, endpoint1, endpoint2, bySeverityCategory=False):
 
     def create_plot(x, y, title, xlabel, ylabel):
         # Calculate the correlation coefficients and line of best fit
+        # Perform linear regression
         slope, intercept, r_value, p_value, std_err = linregress(x, y)
         line = slope * np.array(x) + intercept
         pearson_corr, pearson_p_value = pearsonr(x, y)
@@ -484,7 +485,7 @@ def plot_correlation(df, endpoint1, endpoint2, bySeverityCategory=False):
         ))
 
         fig.update_layout(
-            title=f'Pearson Correlation: {pearson_corr:.2f}, p-value: {pearson_p_value:.4f}',
+            title=title + f'\nPearson Correlation: {pearson_corr:.2f}',
             xaxis_title=xlabel,
             yaxis_title=ylabel,
             template='plotly_white'
@@ -511,7 +512,7 @@ def plot_correlation(df, endpoint1, endpoint2, bySeverityCategory=False):
         y = common_subjects[f'digital_EP_value_{endpoint2}']
 
         create_plot(x, y,
-                    f'{endpoint1} vs {endpoint2} Correlation',
+                    f' Plot of {endpoint1} vs {endpoint2} Correlation',
                     f'{endpoint1} Value', f'{endpoint2} Value')
         
     return plot_results
@@ -733,7 +734,7 @@ def categorized_strip_plot(df, endpoint, gold_standard_endpoint, visit=None):
 
     fig.update_layout(
         title={
-            'text': f'Misclassification of {endpoint} compared to {gold_standard_endpoint}, Visit: {visit if visit else "All"}',
+            'text': f'Plot of misclassification of {endpoint} compared to {gold_standard_endpoint}, Visit: {visit if visit else "All"}',
             'y': 0.95,
             'x': 0.5,
             'xanchor': 'center',

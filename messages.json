@@ -1,0 +1,22 @@
+[
+    {
+        "role": "user",
+        "content": "how many rows are there in the data frame? how many patients?"
+    },
+    {
+        "role": "assistant",
+        "content": "{\"Number of rows\":{\"0\":27679},\"Number of patients\":{\"0\":234}}"
+    },
+    {
+        "role": "user",
+        "content": "create a visualization report"
+    },
+    {
+        "role": "assistant",
+        "content": "Could you please specify the parameters for the visualization report? For example, which endpoints and whether to categorize by severity."
+    },
+    {
+        "role": "user",
+        "content": "ahi and pahi, categorize by severity"
+    }
+]
